@@ -20,17 +20,55 @@ Browser --> Cloudflare (DNS + proxy) --> EC2 instance (Ubuntu + NGINX)
 
 ## Screenshots
 
-### Setup and result
-
-**Instance name and AMI**
+### 1. Configure EC2 Instance in AWS 
 
 ![Instance name and AMI](screenshots/01-launch-name-and-ami.png)
 
-**NGINX default page**
+<img width="1060" height="418" alt="Screenshot 2026-11-18 005405" src="https://github.com/user-attachments/assets/d59d4afc-abef-4063-a6a4-a0e56cdc4d79" />
 
-![NGINX default page](screenshots/08-nginx-welcome-page.png)
+<img width="1071" height="589" alt="image" src="https://github.com/user-attachments/assets/8d3b1662-a27a-4882-9309-b92c25ac8fb9" />
 
-**NGINX served on my own domain**
+As you can see per message below "Rules with source of 0.0.0.0/0 allow all IP addresses to access your instance. We recommend setting security group rules to allow access from known IP
+addresses only" . I configure an Elastic IP which is mention on .4 if you scroll down. 
+
+
+## Installing and Configuring NGINX
+
+The next step was to install NGINX on my EC2 instance.
+
+### 2. Install and Start NGINX
+
+First, I updated the package repositories, installed NGINX and configured the service to start automatically.
+
+```bash
+sudo apt update
+sudo apt install -y nginx
+sudo systemctl enable nginx
+sudo systemctl start nginx
+sudo systemctl status nginx
+```
+
+### 3. Configure DNS Records in Cloudflare
+
+Once NGINX was installed and running, I added an **A record** in my Cloudflare dashboard, pointing my domain to my EC2 instance's public IP address.
+
+![Cloudflare DNS A Record](https://github.com/user-attachments/assets/a0f06b0b-5770-486c-8049-2eb1b521eb35)
+
+### 4. Configure an AWS Elastic IP
+
+I also noticed that my EC2 instance was using a dynamic public IP address, which could change if the instance was stopped and started again.
+
+To prevent this, I allocated and associated an **Elastic IP** with my EC2 instance. This ensures that my NGINX web server retains a consistent public IP address.
+
+I've intentionally blurred the IP address in the screenshots to avoid exposing it.
+
+![Elastic IP Configuration](https://github.com/user-attachments/assets/e7c3c601-31c4-4d63-bb89-be36fff17292)
+
+![Elastic IP Association](https://github.com/user-attachments/assets/957b9cd7-2e02-48fe-b3c3-536b89f19ae7)
+
+### 5. Final Result – NGINX Running on My Custom Domain
+
+Finally, I successfully accessed my NGINX web server using my own custom domain.
 
 ![NGINX served on my own domain](screenshots/09-nginx-on-custom-domain.png)
 
